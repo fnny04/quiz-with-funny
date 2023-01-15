@@ -1,7 +1,16 @@
 import { Button } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 
-const CustButton = ({ text, color, to = "", onClick, w, v, textColor }) => {
+const CustButton = ({
+  text,
+  color,
+  to = "",
+  onClick,
+  w,
+  v,
+  textColor,
+  pad,
+}) => {
   return (
     <>
       {to.length !== 0 ? (
@@ -12,6 +21,7 @@ const CustButton = ({ text, color, to = "", onClick, w, v, textColor }) => {
             onClick={onClick}
             colorScheme={color}
             color={textColor}
+            padding={pad}
           >
             {text}
           </Button>

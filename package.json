@@ -12,10 +12,12 @@
     "@chakra-ui/react": "^2.4.8",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "axios": "^1.2.2",
     "framer-motion": "^8.4.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.6.2"
+    "react-router-dom": "^6.6.2",
+    "sweetalert2": "^11.7.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.26",
