@@ -1,26 +1,34 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import CustButton from "../components/CustButton";
-import { useEffect, useState, Fragment } from "react";
+import Loading from "../components/Loading";
+import { useFetchAllQuiz } from "../hooks/Quiz/useFetchAllQuiz";
+import { Fragment, useState } from "react";
+import ToggleTheme from "../components/ToggleTheme";
 
 export default function QuizScreen() {
-  const [q, setQ] = useState([0]);
+  const [amount, setAmount] = useState(1);
+  const { data, isFetching } = useFetchAllQuiz({ amount });
+  const [currentAnswer, setCurrentAnswer] = useState();
+  const [alreadyAnswerd, setAlreadyAnswerd] = useState(0);
+  const [resultData, setResultData] = useState(null);
 
-  const fetchQuestion = async () => {
-    const response = await fetch(
-      `https://opentdb.com/api.php?amount=5&category=26&difficulty=easy&type=multiple`
-    );
-    const q = await response.json();
-    setQ(q);
+  const handleSubmit = () => {
+    const dataResult = countResult(data, currentAnswer);
+    setResultData(dataResult);
+    setNumber(0);
   };
 
-  useEffect(() => {
-    fetchQuestion();
-  }, []);
-
-  console.log(q.results);
+  const handleQuestion = (e) => {
+    let newCurrentAnswer = currentAnswer;
+    newCurrentAnswer[number] = e;
+    setAlreadyAnswerd(countAlreadyAnswerd(newCurrentAnswer));
+    setCurrentAnswer(newCurrentAnswer);
+    setNumber(number === data.length - 1 ? number : number + 1);
+  };
 
   return (
     <>
+      <ToggleTheme />
       <Flex p={"4rem"} flexDirection="column" gap="8px">
         <Box
           rounded={"lg"}
@@ -33,45 +41,61 @@ export default function QuizScreen() {
           gap="6px"
         >
           <Text p="8px">Time Left 00:00:00</Text>
-          {q.results.map((x, i) => (
-            <Fragment key={i}>
-              <Text fontSize={"3xl"} color="white" pt="6rem">
-                {x.question}
-              </Text>
-              <CustButton
-                w="14rem"
-                text={x.incorrect_answers[0]}
-                color={"blue"}
-                v="solid"
-              />
-              <CustButton
-                w="14rem"
-                text={x.incorrect_answers[1]}
-                color={"blue"}
-                v="solid"
-              />
-              <CustButton
-                w="14rem"
-                text={x.correct_answer}
-                color={"blue"}
-                v="solid"
-              />
-              <CustButton
-                w="14rem"
-                text={x.incorrect_answers[2]}
-                color={"blue"}
-                v="solid"
-              />
-            </Fragment>
-          ))}
+          {!isFetching ? (
+            data.map((x, i) => (
+              <Fragment key={i}>
+                <Text fontSize={"3xl"} color="white" pt="6rem">
+                  {x.question}
+                </Text>
+                <CustButton
+                  w="14rem"
+                  text={x.incorrect_answers[0]}
+                  color={"blue"}
+                  v="solid"
+                />
+                <CustButton
+                  w="14rem"
+                  text={x.incorrect_answers[1]}
+                  color={"blue"}
+                  v="solid"
+                />
+                <CustButton
+                  w="14rem"
+                  text={x.correct_answer}
+                  color={"blue"}
+                  v="solid"
+                />
+                <CustButton
+                  w="14rem"
+                  text={x.incorrect_answers[2]}
+                  color={"blue"}
+                  v="solid"
+                />
+              </Fragment>
+            ))
+          ) : (
+            <Loading />
+          )}
 
           <Text pt="6rem" color={"white"} fontSize={"small"}>
-            1 of 10 quesyion
+            {amount} of 10 quesyion
           </Text>
         </Box>
         <Flex justifyContent={"space-between"}>
-          <CustButton to="/" w="8rem" text={"Prev"} color={"blue"} v="solid" />
-          <CustButton to="/" w="8rem" text={"Next"} color={"green"} v="solid" />
+          <CustButton
+            onClick={() => setAmount((prev) => prev !== 1 && prev - 1)}
+            w="8rem"
+            text={"Prev"}
+            color={"blue"}
+            v="solid"
+          />
+          <CustButton
+            onClick={() => setAmount((prev) => prev !== 10 && prev + 1)}
+            w="8rem"
+            text={"Next"}
+            color={"green"}
+            v="solid"
+          />
         </Flex>
       </Flex>
     </>
